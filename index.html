@@ -1,0 +1,173 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.app{padding:1.5rem 0}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.brand{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.brand span{font-size:13px;font-weight:400;color:var(--color-text-secondary);margin-left:8px}
+.tabs{display:flex;gap:6px;margin-bottom:1.25rem}
+.tab{padding:6px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:transparent;color:var(--color-text-secondary);font-size:13px;cursor:pointer;transition:all .15s}
+.tab.active{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:var(--color-border-secondary);font-weight:500}
+.section{margin-bottom:1.5rem}
+.section-label{font-size:11px;font-weight:500;color:var(--color-text-tertiary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.task-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.85rem 1rem;display:flex;align-items:flex-start;gap:10px;margin-bottom:6px;transition:border-color .15s}
+.task-card:hover{border-color:var(--color-border-secondary)}
+.task-card.done .task-title{text-decoration:line-through;color:var(--color-text-tertiary)}
+.task-card.done .task-meta{color:var(--color-text-tertiary)}
+.check-btn{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.check-btn.checked{background:var(--color-background-success);border-color:var(--color-border-success)}
+.check-btn.checked::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--color-text-success)}
+.task-body{flex:1;min-width:0}
+.task-title{font-size:14px;color:var(--color-text-primary);line-height:1.4;margin-bottom:3px}
+.task-meta{font-size:12px;color:var(--color-text-secondary);display:flex;align-items:center;gap:8px}
+.badge{padding:2px 8px;border-radius:var(--border-radius-md);font-size:11px;font-weight:500}
+.badge-week{background:var(--color-background-info);color:var(--color-text-info)}
+.badge-next{background:var(--color-background-warning);color:var(--color-text-warning)}
+.badge-ai{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.badge-urgent{background:var(--color-background-danger);color:var(--color-text-danger)}
+.add-area{display:flex;gap:8px;margin-top:1rem}
+.add-area input{flex:1;padding:8px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px}
+.add-area select{padding:8px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);color:var(--color-text-secondary);font-size:12px}
+.add-btn{padding:8px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary);font-size:13px;cursor:pointer}
+.add-btn:hover{background:var(--color-background-secondary)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
+.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.85rem 1rem}
+.stat-num{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.stat-label{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.progress-bar{height:4px;background:var(--color-border-tertiary);border-radius:2px;margin:1rem 0 1.25rem;overflow:hidden}
+.progress-fill{height:100%;background:var(--color-text-success);border-radius:2px;transition:width .4s}
+.empty{text-align:center;padding:2rem;color:var(--color-text-tertiary);font-size:13px}
+.ai-hint{font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.6rem .9rem;margin-top:.5rem;border-left:2px solid var(--color-border-secondary)}
+</style>
+
+<h2 class="sr-only">大璽室內設計 — 瑞恆的工作待辦清單</h2>
+
+<div class="app">
+  <div class="header">
+    <div>
+      <div class="brand">大璽工作台 <span>瑞恆</span></div>
+    </div>
+    <div id="today-date" style="font-size:12px;color:var(--color-text-tertiary)"></div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num" id="stat-total">0</div>
+      <div class="stat-label">全部任務</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="stat-done">0</div>
+      <div class="stat-label">已完成</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="stat-left">0</div>
+      <div class="stat-label">待處理</div>
+    </div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('all')">全部</button>
+    <button class="tab" onclick="setTab('week')">本週</button>
+    <button class="tab" onclick="setTab('next')">下週</button>
+    <button class="tab" onclick="setTab('ai')">AI 建議</button>
+    <button class="tab" onclick="setTab('done')">已完成</button>
+  </div>
+
+  <div id="task-list"></div>
+
+  <div class="ai-hint">💡 AI 建議任務會隨你的進度自動更新 — 完成本週核心任務後可點「請 AI 更新建議」</div>
+
+  <div class="add-area">
+    <input type="text" id="new-task" placeholder="新增任務..." />
+    <select id="new-tag">
+      <option value="week">本週</option>
+      <option value="next">下週</option>
+    </select>
+    <button class="add-btn" onclick="addTask()"><i class="ti ti-plus" aria-hidden="true"></i> 新增</button>
+  </div>
+
+  <div style="margin-top:.75rem;display:flex;gap:8px">
+    <button class="add-btn" style="font-size:12px" onclick="sendPrompt('幫我更新 AI 建議的任務清單，根據我目前的進度給我新的建議')">請 AI 更新建議 ↗</button>
+    <button class="add-btn" style="font-size:12px" onclick="sendPrompt('我現在的任務完成狀況如何？幫我做個總結')">查看進度摘要 ↗</button>
+  </div>
+</div>
+
+<script>
+const TASKS = [
+  {id:1,title:'7天 Threads 文章',tag:'week',source:'user',done:false,note:'每天一篇，保持更新頻率'},
+  {id:2,title:'3支短影音逐字稿',tag:'week',source:'user',done:false,note:'老屋翻新主題為主'},
+  {id:3,title:'Messenger 初次回覆模板',tag:'week',source:'user',done:false,note:'一問一答流程，四輪導引'},
+  {id:4,title:'Meta 廣告數據表格建立',tag:'next',source:'user',done:false,note:'需準備廣告數據'},
+  {id:5,title:'SOP 正式建立',tag:'next',source:'user',done:false,note:'六階段流程整理'},
+  {id:6,title:'整理本週 Threads 成效，找出高分享貼文',tag:'ai',source:'ai',done:false,note:'高分享帖 → 下一支影音題材'},
+  {id:7,title:'更新客戶跟進訊息（沉默潛客）',tag:'ai',source:'ai',done:false,note:'用作品集或小提示暖身'},
+  {id:8,title:'複查廣告受眾設定，確認老屋翻新活動狀態',tag:'ai',source:'ai',done:false,note:'平日優於週末，確認排程'},
+  {id:9,title:'建立每月案件損益表',tag:'ai',source:'ai',done:false,note:'定期對帳，掌握毛利'},
+];
+
+let tasks=[...TASKS];
+let currentTab='all';
+let nextId=20;
+
+function setTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  render();
+}
+
+function toggle(id){
+  const t=tasks.find(t=>t.id===id);
+  if(t)t.done=!t.done;
+  render();
+}
+
+function addTask(){
+  const inp=document.getElementById('new-task');
+  const tag=document.getElementById('new-tag').value;
+  const title=inp.value.trim();
+  if(!title)return;
+  tasks.push({id:nextId++,title,tag,source:'user',done:false,note:''});
+  inp.value='';
+  render();
+}
+
+document.getElementById('new-task').addEventListener('keydown',e=>{if(e.key==='Enter')addTask()});
+
+function render(){
+  const total=tasks.length;
+  const done=tasks.filter(t=>t.done).length;
+  document.getElementById('stat-total').textContent=total;
+  document.getElementById('stat-done').textContent=done;
+  document.getElementById('stat-left').textContent=total-done;
+  document.getElementById('progress').style.width=total?Math.round(done/total*100)+'%':'0%';
+
+  let filtered;
+  if(currentTab==='all') filtered=tasks.filter(t=>!t.done);
+  else if(currentTab==='done') filtered=tasks.filter(t=>t.done);
+  else if(currentTab==='ai') filtered=tasks.filter(t=>t.source==='ai'&&!t.done);
+  else filtered=tasks.filter(t=>t.tag===currentTab&&!t.done);
+
+  const list=document.getElementById('task-list');
+  if(!filtered.length){list.innerHTML='<div class="empty">沒有任務 🎉</div>';return;}
+
+  list.innerHTML=filtered.map(t=>`
+    <div class="task-card${t.done?' done':''}">
+      <button class="check-btn${t.done?' checked':''}" onclick="toggle(${t.id})" aria-label="切換完成狀態"></button>
+      <div class="task-body">
+        <div class="task-title">${t.title}</div>
+        <div class="task-meta">
+          <span class="badge ${t.tag==='week'?'badge-week':t.tag==='next'?'badge-next':'badge-ai'}">${t.tag==='week'?'本週':t.tag==='next'?'下週':'AI建議'}</span>
+          ${t.note?`<span>${t.note}</span>`:''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+document.getElementById('today-date').textContent=new Date().toLocaleDateString('zh-TW',{month:'long',day:'numeric',weekday:'short'});
+render();
+</script>

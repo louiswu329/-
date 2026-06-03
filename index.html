@@ -2,7 +2,9 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>大璽工作台</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -13,131 +15,54 @@
     min-height: 100vh;
     padding-bottom: 80px;
   }
-
-  /* Header */
   .header {
     background: #1a1a1a;
-    color: #fff;
-    padding: 20px 20px 16px;
+    padding: 52px 20px 14px;
     position: sticky;
     top: 0;
     z-index: 10;
   }
   .header-top {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     margin-bottom: 14px;
   }
-  .brand { font-size: 17px; font-weight: 600; letter-spacing: .02em; }
-  .brand-sub { font-size: 12px; color: #888; font-weight: 400; }
-  .date-chip {
-    font-size: 11px;
-    color: #888;
-    background: #2a2a2a;
-    padding: 4px 10px;
-    border-radius: 20px;
-  }
-
-  /* Stats */
-  .stats {
-    display: flex;
-    gap: 8px;
-  }
-  .stat {
+  .brand { font-size: 17px; font-weight: 600; color: #fff; letter-spacing: .02em; }
+  .brand-sub { font-size: 12px; color: #888; margin-top: 3px; }
+  .date-chip { font-size: 11px; color: #888; }
+  .stats { display: flex; gap: 6px; }
+  .stat-btn {
     flex: 1;
     background: #2a2a2a;
+    border: 1.5px solid transparent;
     border-radius: 10px;
-    padding: 10px 12px;
-  }
-  .stat-num {
-    font-size: 22px;
-    font-weight: 700;
-    color: #fff;
-    line-height: 1;
-  }
-  .stat-label {
-    font-size: 10px;
-    color: #666;
-    margin-top: 3px;
-  }
-  .stat.highlight .stat-num { color: #A8E6C3; }
-
-  /* Progress bar */
-  .progress-wrap {
-    background: #1a1a1a;
-    padding: 0 20px 14px;
-  }
-  .progress-bar {
-    height: 3px;
-    background: #333;
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: #A8E6C3;
-    border-radius: 2px;
-    transition: width .4s ease;
-  }
-
-  /* Tabs */
-  .tabs {
-    display: flex;
-    gap: 6px;
-    padding: 14px 20px 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-    background: #F5F4F0;
-  }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab {
-    flex-shrink: 0;
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1.5px solid #ddd;
-    background: transparent;
-    color: #888;
-    font-size: 13px;
+    padding: 10px 0;
+    text-align: center;
     cursor: pointer;
-    font-family: inherit;
-    transition: all .15s;
+    transition: border-color .15s;
+    -webkit-tap-highlight-color: transparent;
   }
-  .tab.active {
-    background: #1a1a1a;
-    border-color: #1a1a1a;
-    color: #fff;
-    font-weight: 500;
-  }
-
-  /* Content */
-  .content { padding: 14px 20px 0; }
-
-  .section-label {
-    font-size: 10px;
-    font-weight: 600;
-    color: #aaa;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    margin: 16px 0 8px;
-  }
-
-  /* Task card */
+  .stat-btn.active { border-color: #555; }
+  .stat-num { font-size: 20px; font-weight: 700; color: #fff; line-height: 1; }
+  .stat-num.green { color: #A8E6C3; }
+  .stat-label { font-size: 9px; color: #888; margin-top: 3px; }
+  .progress-wrap { background: #1a1a1a; padding: 0 20px 14px; }
+  .progress-bar { height: 3px; background: #333; border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: #A8E6C3; border-radius: 2px; transition: width .4s ease; }
+  .content { padding: 8px 20px 0; }
   .task-card {
-    background: #fff;
-    border-radius: 14px;
-    padding: 14px 14px 14px 12px;
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    margin-bottom: 8px;
-    border: 1px solid #eee;
-    transition: opacity .2s, border-color .2s;
+    padding: 14px 0;
+    border-bottom: 1px solid #e8e6e2;
+    cursor: pointer;
+    transition: opacity .2s;
     -webkit-tap-highlight-color: transparent;
   }
   .task-card.done { opacity: .45; }
   .task-card.done .task-title { text-decoration: line-through; }
-
   .check-btn {
     width: 22px;
     height: 22px;
@@ -146,73 +71,33 @@
     background: transparent;
     flex-shrink: 0;
     margin-top: 1px;
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all .2s;
-    -webkit-tap-highlight-color: transparent;
   }
-  .check-btn.checked {
-    background: #A8E6C3;
-    border-color: #A8E6C3;
-  }
-  .check-btn.checked::after {
-    content: '✓';
-    font-size: 12px;
-    color: #1a6640;
-    font-weight: 700;
-  }
-
+  .check-btn.checked { background: #A8E6C3; border-color: #A8E6C3; }
+  .check-btn.checked::after { content: '✓'; font-size: 12px; color: #1a6640; font-weight: 700; }
   .task-body { flex: 1; min-width: 0; }
-  .task-title {
-    font-size: 14px;
-    line-height: 1.45;
-    margin-bottom: 5px;
-    color: #1a1a1a;
-  }
-  .task-footer {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-
-  .badge {
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 20px;
-    letter-spacing: .02em;
-  }
-  .badge-week { background: #E8F0FE; color: #3355CC; }
-  .badge-next { background: #FEF3E2; color: #CC7700; }
-  .badge-ai { background: #F0F0F0; color: #666; }
-
-  .task-note {
-    font-size: 11px;
-    color: #aaa;
-  }
-
-  /* Empty state */
+  .task-title { font-size: 14px; line-height: 1.45; color: #1a1a1a; margin-bottom: 3px; }
+  .task-note { font-size: 11px; color: #aaa; }
+  .task-expire { font-size: 10px; color: #CC7700; margin-top: 4px; }
   .empty {
     text-align: center;
-    padding: 40px 20px;
+    padding: 50px 20px;
     color: #bbb;
     font-size: 14px;
   }
   .empty-icon { font-size: 36px; margin-bottom: 10px; }
-
-  /* Add task bar */
   .add-bar {
     position: fixed;
-    bottom: 0;
-    left: 0; right: 0;
+    bottom: 0; left: 0; right: 0;
     background: #fff;
     border-top: 1px solid #eee;
     padding: 12px 16px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
     display: flex;
     gap: 8px;
+    align-items: center;
     z-index: 20;
   }
   .add-input {
@@ -228,16 +113,6 @@
   }
   .add-input:focus { border-color: #1a1a1a; }
   .add-input::placeholder { color: #bbb; }
-  .add-select {
-    padding: 10px 8px;
-    border-radius: 10px;
-    border: 1.5px solid #e0e0e0;
-    background: #F5F4F0;
-    font-size: 12px;
-    font-family: inherit;
-    color: #555;
-    outline: none;
-  }
   .add-btn {
     width: 42px;
     height: 42px;
@@ -253,18 +128,16 @@
     flex-shrink: 0;
     line-height: 1;
   }
-
-  /* Toast */
   .toast {
     position: fixed;
-    top: 16px;
+    bottom: 90px;
     left: 50%;
     transform: translateX(-50%);
     background: #1a1a1a;
     color: #fff;
     padding: 8px 18px;
     border-radius: 20px;
-    font-size: 13px;
+    font-size: 12px;
     z-index: 100;
     opacity: 0;
     transition: opacity .2s;
@@ -280,14 +153,23 @@
   <div class="header-top">
     <div>
       <div class="brand">大璽工作台</div>
-      <div class="brand-sub">瑞恆的任務清單</div>
+      <div class="brand-sub">代辦事項</div>
     </div>
     <div class="date-chip" id="today-date"></div>
   </div>
   <div class="stats">
-    <div class="stat"><div class="stat-num" id="stat-total">0</div><div class="stat-label">全部任務</div></div>
-    <div class="stat highlight"><div class="stat-num" id="stat-done">0</div><div class="stat-label">已完成</div></div>
-    <div class="stat"><div class="stat-num" id="stat-left">0</div><div class="stat-label">待處理</div></div>
+    <button class="stat-btn active" id="btn-all" onclick="setView('all')">
+      <div class="stat-num" id="s-total">0</div>
+      <div class="stat-label">全部任務</div>
+    </button>
+    <button class="stat-btn" id="btn-done" onclick="setView('done')">
+      <div class="stat-num green" id="s-done">0</div>
+      <div class="stat-label">已完成</div>
+    </button>
+    <button class="stat-btn" id="btn-todo" onclick="setView('todo')">
+      <div class="stat-num" id="s-left">0</div>
+      <div class="stat-label">待處理</div>
+    </button>
   </div>
 </div>
 
@@ -295,131 +177,123 @@
   <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
 </div>
 
-<div class="tabs" id="tabs">
-  <button class="tab active" onclick="setTab('all',this)">全部</button>
-  <button class="tab" onclick="setTab('week',this)">本週</button>
-  <button class="tab" onclick="setTab('next',this)">下週</button>
-  <button class="tab" onclick="setTab('ai',this)">AI 建議</button>
-  <button class="tab" onclick="setTab('done',this)">已完成</button>
-</div>
-
 <div class="content" id="task-list"></div>
 
 <div class="add-bar">
-  <input class="add-input" id="new-task" type="text" placeholder="新增任務..." />
-  <select class="add-select" id="new-tag">
-    <option value="week">本週</option>
-    <option value="next">下週</option>
-  </select>
+  <input class="add-input" id="new-task" type="text" placeholder="新增任務…" />
   <button class="add-btn" onclick="addTask()">+</button>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const TASKS = [
-  {id:1,title:'7天 Threads 文章',tag:'week',source:'user',done:false,note:'每天一篇，保持更新頻率'},
-  {id:2,title:'3支短影音逐字稿',tag:'week',source:'user',done:false,note:'老屋翻新主題為主'},
-  {id:3,title:'Messenger 初次回覆模板',tag:'week',source:'user',done:false,note:'一問一答流程，四輪導引'},
-  {id:4,title:'Meta 廣告數據表格建立',tag:'next',source:'user',done:false,note:'需準備廣告數據'},
-  {id:5,title:'SOP 正式建立',tag:'next',source:'user',done:false,note:'六階段流程整理'},
-  {id:6,title:'整理本週 Threads 成效，找出高分享貼文',tag:'ai',source:'ai',done:false,note:'高分享 → 下支影音題材'},
-  {id:7,title:'更新客戶跟進訊息（沉默潛客）',tag:'ai',source:'ai',done:false,note:'用作品集或小提示暖身'},
-  {id:8,title:'複查廣告受眾設定，確認活動狀態',tag:'ai',source:'ai',done:false,note:'老屋翻新活動，確認平日排程'},
-  {id:9,title:'建立每月案件損益表',tag:'ai',source:'ai',done:false,note:'定期對帳，掌握毛利'},
+var DAY_MS = 86400000;
+var STORAGE_KEY = 'dashi_v3';
+
+var defaultTasks = [
+  {id:1, title:'7天 Threads 文章', done:false, doneAt:null, note:'每天一篇，保持更新頻率'},
+  {id:2, title:'3支短影音逐字稿', done:false, doneAt:null, note:'老屋翻新主題為主'},
+  {id:3, title:'Messenger 初次回覆模板', done:false, doneAt:null, note:'一問一答流程，四輪導引'},
+  {id:4, title:'Meta 廣告數據表格建立', done:false, doneAt:null, note:'需準備廣告數據'},
+  {id:5, title:'SOP 正式建立', done:false, doneAt:null, note:'六階段流程整理'},
 ];
 
-let tasks = JSON.parse(localStorage.getItem('dashi_tasks') || 'null') || TASKS;
-let currentTab = 'all';
-let nextId = Math.max(...tasks.map(t=>t.id)) + 1;
+var tasks = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || defaultTasks;
+var currentView = 'all';
+var nextId = Math.max.apply(null, tasks.map(function(t){return t.id})) + 1;
 
-function save() {
-  localStorage.setItem('dashi_tasks', JSON.stringify(tasks));
-}
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)); }
 
-function setTab(tab, el) {
-  currentTab = tab;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
+function setView(v) {
+  currentView = v;
+  document.getElementById('btn-all').className = 'stat-btn' + (v==='all'?' active':'');
+  document.getElementById('btn-done').className = 'stat-btn' + (v==='done'?' active':'');
+  document.getElementById('btn-todo').className = 'stat-btn' + (v==='todo'?' active':'');
   render();
 }
 
 function toggle(id) {
-  const t = tasks.find(t=>t.id===id);
+  var t = tasks.find(function(x){return x.id===id});
   if (!t) return;
   t.done = !t.done;
+  t.doneAt = t.done ? Date.now() : null;
   save();
-  showToast(t.done ? '✓ 完成！' : '已取消完成');
+  showToast(t.done ? '完成 ✓' : '已取消完成');
   render();
 }
 
 function addTask() {
-  const inp = document.getElementById('new-task');
-  const tag = document.getElementById('new-tag').value;
-  const title = inp.value.trim();
+  var inp = document.getElementById('new-task');
+  var title = inp.value.trim();
   if (!title) return;
-  tasks.push({id:nextId++, title, tag, source:'user', done:false, note:''});
-  inp.value='';
+  tasks.push({id: nextId++, title: title, done: false, doneAt: null, note: ''});
+  inp.value = '';
   save();
   showToast('任務已新增');
-  currentTab = tag;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab')[tag==='week'?1:2].classList.add('active');
   render();
 }
 
 function showToast(msg) {
-  const t = document.getElementById('toast');
+  var t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 1800);
+  setTimeout(function(){ t.classList.remove('show'); }, 1600);
 }
 
-function tagLabel(tag) {
-  return tag==='week'?'本週':tag==='next'?'下週':'AI建議';
+function daysLeft(doneAt) {
+  if (!doneAt) return 10;
+  var elapsed = Math.floor((Date.now() - doneAt) / DAY_MS);
+  return Math.max(0, 10 - elapsed);
 }
-function tagClass(tag) {
-  return tag==='week'?'badge-week':tag==='next'?'badge-next':'badge-ai';
+
+function cleanExpired() {
+  tasks = tasks.filter(function(t) {
+    return !t.done || daysLeft(t.doneAt) > 0;
+  });
+  save();
 }
 
 function render() {
-  const total = tasks.length;
-  const done = tasks.filter(t=>t.done).length;
-  document.getElementById('stat-total').textContent = total;
-  document.getElementById('stat-done').textContent = done;
-  document.getElementById('stat-left').textContent = total - done;
+  cleanExpired();
+
+  var total = tasks.length;
+  var done = tasks.filter(function(t){return t.done}).length;
+  var left = total - done;
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-done').textContent = done;
+  document.getElementById('s-left').textContent = left;
   document.getElementById('progress').style.width = total ? Math.round(done/total*100)+'%' : '0%';
 
-  let filtered;
-  if (currentTab==='all') filtered = tasks.filter(t=>!t.done);
-  else if (currentTab==='done') filtered = tasks.filter(t=>t.done);
-  else if (currentTab==='ai') filtered = tasks.filter(t=>t.source==='ai'&&!t.done);
-  else filtered = tasks.filter(t=>t.tag===currentTab&&!t.done);
+  var list;
+  if (currentView === 'done') list = tasks.filter(function(t){return t.done});
+  else if (currentView === 'todo') list = tasks.filter(function(t){return !t.done});
+  else list = tasks.slice();
 
-  const list = document.getElementById('task-list');
-  if (!filtered.length) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">${currentTab==='done'?'🎉':'📋'}</div>${currentTab==='done'?'還沒有完成的任務':'這裡沒有任務'}</div>`;
+  var el = document.getElementById('task-list');
+
+  if (!list.length) {
+    var msg = currentView==='done' ? '還沒有完成的任務' : currentView==='todo' ? '太棒了，全部完成！' : '還沒有任務';
+    el.innerHTML = '<div class="empty"><div class="empty-icon">' + (currentView==='todo'?'🎉':'📋') + '</div>' + msg + '</div>';
     return;
   }
 
-  list.innerHTML = filtered.map(t=>`
-    <div class="task-card${t.done?' done':''}" onclick="toggle(${t.id})">
-      <div class="check-btn${t.done?' checked':''}"></div>
-      <div class="task-body">
-        <div class="task-title">${t.title}</div>
-        <div class="task-footer">
-          <span class="badge ${tagClass(t.tag)}">${tagLabel(t.tag)}</span>
-          ${t.note?`<span class="task-note">${t.note}</span>`:''}
-        </div>
-      </div>
-    </div>
-  `).join('');
+  el.innerHTML = list.map(function(t) {
+    var remain = t.done ? daysLeft(t.doneAt) : null;
+    return '<div class="task-card' + (t.done?' done':'') + '" onclick="toggle(' + t.id + ')">'
+      + '<div class="check-btn' + (t.done?' checked':'') + '"></div>'
+      + '<div class="task-body">'
+      + '<div class="task-title">' + t.title + '</div>'
+      + (t.note ? '<div class="task-note">' + t.note + '</div>' : '')
+      + (t.done && remain !== null ? '<div class="task-expire">' + remain + ' 天後自動清除</div>' : '')
+      + '</div></div>';
+  }).join('');
 }
 
-document.getElementById('new-task').addEventListener('keydown', e=>{if(e.key==='Enter')addTask()});
+document.getElementById('new-task').addEventListener('keydown', function(e){if(e.key==='Enter')addTask()});
 
-const now = new Date();
-document.getElementById('today-date').textContent = now.toLocaleDateString('zh-TW',{month:'numeric',day:'numeric',weekday:'short'});
+var now = new Date();
+var days = ['日','一','二','三','四','五','六'];
+document.getElementById('today-date').textContent = (now.getMonth()+1) + '/' + now.getDate() + ' 週' + days[now.getDay()];
 
 render();
 </script>

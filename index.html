@@ -114,19 +114,16 @@
   .add-input:focus { border-color: #1a1a1a; }
   .add-input::placeholder { color: #bbb; }
   .add-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
+    padding: 10px 20px;
+    border-radius: 22px;
     background: #1a1a1a;
     border: none;
     color: #fff;
-    font-size: 22px;
+    font-size: 15px;
+    font-family: inherit;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     flex-shrink: 0;
-    line-height: 1;
+    -webkit-tap-highlight-color: transparent;
   }
   .toast {
     position: fixed;
@@ -181,7 +178,7 @@
 
 <div class="add-bar">
   <input class="add-input" id="new-task" type="text" placeholder="新增任務…" />
-  <button class="add-btn" onclick="addTask()">+</button>
+  <button class="add-btn" onclick="addTask()">新增</button>
 </div>
 
 <div class="toast" id="toast"></div>
